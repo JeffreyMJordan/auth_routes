@@ -25249,10 +25249,15 @@ var _entities = __webpack_require__(238);
 
 var _entities2 = _interopRequireDefault(_entities);
 
+var _session = __webpack_require__(287);
+
+var _session2 = _interopRequireDefault(_session);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.default = (0, _redux.combineReducers)({
-  entities: _entities2.default
+  entities: _entities2.default,
+  session: _session2.default
 });
 
 /***/ }),
@@ -29438,6 +29443,95 @@ exports.default = function () {
       "Where birds can chirp."
     )
   );
+};
+
+/***/ }),
+/* 287 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _session = __webpack_require__(288);
+
+var _nullSession = {
+    currentUser: null
+};
+
+exports.default = function () {
+    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : _nullSession;
+    var action = arguments[1];
+
+    Object.freeze(state);
+    switch (action.type) {
+
+        case _session.RECEIVE_CURRENT_USER:
+            return Object.assign({}, { currentUser: action.user });
+
+        case _session.LOGOUT_CURRENT_USER:
+            return _nullSession;
+
+        default:
+            return state;
+    }
+};
+
+/***/ }),
+/* 288 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.logout = exports.login = exports.createNewUser = exports.LOGOUT_CURRENT_USER = exports.RECEIVE_CURRENT_USER = undefined;
+
+var _session = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"../util/session\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+
+var RECEIVE_CURRENT_USER = exports.RECEIVE_CURRENT_USER = "RECEIVE_CURRENT_USER";
+var LOGOUT_CURRENT_USER = exports.LOGOUT_CURRENT_USER = "LOGOUT_CURRENT_USER";
+
+var receiveCurrentUser = function receiveCurrentUser(user) {
+    return {
+        type: RECEIVE_CURRENT_USER,
+        user: user
+    };
+};
+
+var logoutCurrentUser = function logoutCurrentUser() {
+    return {
+        type: LOGOUT_CURRENT_USER
+    };
+};
+
+var createNewUser = exports.createNewUser = function createNewUser(formUser) {
+    return function (dispatch) {
+        (0, _session.postUser)(formUser).then(function (user) {
+            return dispatch(receiveCurrentUser(user));
+        });
+    };
+};
+
+var login = exports.login = function login(formUser) {
+    return function (dispatch) {
+        (0, _session.postSession)(formUser).then(function (user) {
+            return dispatch(receiveCurrentUser(user));
+        });
+    };
+};
+
+var logout = exports.logout = function logout() {
+    return function (dispatch) {
+        (0, _session.deleteSession)().then(function (user) {
+            return dispatch(logoutCurrentUser());
+        });
+    };
 };
 
 /***/ })
